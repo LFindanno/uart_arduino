@@ -1,0 +1,184 @@
+#!/usr/bin/python
+#
+# main.py
+# Copyright (C) 2014 Luigi Findanno <lfindanno@yahoo.it>
+# 
+
+from gi.repository import Gtk, GdkPixbuf, Gdk
+import os, sys, serial
+from serial.tools import list_ports
+
+#Comment the first line and uncomment the second before installing
+#or making the tarball (alternatively, use project variables)
+UI_FILE = "src/prova.ui"
+#UI_FILE = "/usr/local/share/prova/ui/prova.ui"
+
+
+class GUI:
+	def __init__(self):
+
+		self.builder = Gtk.Builder()
+		self.builder.add_from_file(UI_FILE)
+		self.builder.connect_signals(self)
+		
+		#Inizializzazione togglebutton
+		self.tbta = self.builder.get_object('tbta')
+		self.tbtb = self.builder.get_object('tbtb')
+		self.tbtc = self.builder.get_object('tbtc')
+		self.tbtd = self.builder.get_object('tbtd')
+		self.tbte = self.builder.get_object('tbte')
+		self.tbtf = self.builder.get_object('tbtf')
+		self.tbtg = self.builder.get_object('tbtg')
+		self.tbth = self.builder.get_object('tbth')
+		
+		#Inizializza la combobox delle porte seriali
+		self.cmbport = self.builder.get_object('cmbport')
+		window = self.builder.get_object('window')
+
+		window.show_all()
+
+		#Riempie la combobox con la lista delle porte seriali
+		for p in serial_ports():
+			self.cmbport.append_text(p)
+		
+
+	def destroy(window, self):
+		Gtk.main_quit()
+
+	# Evento su Togglebutton OUT A
+	def onouta(self, *args):
+		if self.tbta.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("A")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("a")
+			ser.close()
+
+	# Evento su Togglebutton OUT B
+	def onoutb(self, *args):
+		if self.tbtb.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("B")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("b")
+			ser.close()
+
+	# Evento su Togglebutton OUT C
+	def onoutc(self, *args):
+		if self.tbtc.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("C")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("c")
+			ser.close()
+			
+	# Evento su Togglebutton OUT D
+	def onoutd(self, *args):
+		if self.tbtd.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("D")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("d")
+			ser.close()
+			
+	# Evento su Togglebutton OUT E
+	def onoute(self, *args):
+		if self.tbte.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("E")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("e")
+			ser.close()
+			
+	# Evento su Togglebutton OUT F
+	def onoutf(self, *args):
+		if self.tbtf.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("F")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("f")
+			ser.close()
+			
+	# Evento su Togglebutton OUT G
+	def onoutg(self, *args):
+		if self.tbtg.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("G")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("g")
+			ser.close()
+			
+	# Evento su Togglebutton OUT H
+	def onouth(self, *args):
+		if self.tbth.get_active():
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("H")
+			ser.close()
+		else:
+			ser = serial.Serial(self.cmbport.get_active_text(), 9600)
+			ser.write ("h")
+			ser.close()
+
+	# Evento pulsante set all
+	def onset(self, *args):
+		# imposta tutti i togglebutton su on
+		self.tbta.set_active(True)
+		self.tbtb.set_active(True)
+		self.tbtc.set_active(True)
+		self.tbtd.set_active(True)
+		self.tbte.set_active(True)
+		self.tbtf.set_active(True)
+		self.tbtg.set_active(True)
+		self.tbth.set_active(True)
+
+	# Evento pulsante reset all
+	def onreset(self, *args):
+		# imposta tutti i togglebutton su off
+		self.tbta.set_active(False)
+		self.tbtb.set_active(False)
+		self.tbtc.set_active(False)
+		self.tbtd.set_active(False)
+		self.tbte.set_active(False)
+		self.tbtf.set_active(False)
+		self.tbtg.set_active(False)
+		self.tbth.set_active(False)
+
+
+		
+def main():
+	app = GUI()
+	Gtk.main()
+		
+
+# Generatore lista delle porte seriali disponibili
+def serial_ports():
+	if os.name == 'nt':
+		# windows
+		for i in range(256):
+			try:
+				s = serial.Serial(i)
+				s.close()
+				yield 'COM' + str(i + 1)
+			except serial.SerialException:
+				pass
+	else:
+		# unix
+		for port in list_ports.comports():
+			yield port[0]
+
+if __name__ == "__main__":
+    sys.exit(main())
